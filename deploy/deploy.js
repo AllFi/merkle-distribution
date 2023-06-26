@@ -9,7 +9,9 @@ module.exports = async ({ deployments, getNamedAccounts }) => {
     const { deployer } = await getNamedAccounts();
     console.log(`deployer: ${deployer}`);
 
-    const args = ['0xCfEB869F69431e42cdB54A4F4f105C19C080A601'];
+    const token = "0xCfEB869F69431e42cdB54A4F4f105C19C080A601";
+    const dd = "0x9b1f7F645351AF3631a656421eD2e40f2802E6c0";
+    const args = [token, dd];
 
     const merkleDrop = await deploy('CumulativeMerkleDrop', {
         from: deployer,
@@ -21,7 +23,7 @@ module.exports = async ({ deployments, getNamedAccounts }) => {
     const cumulativeMerkleDrop = CumulativeMerkleDrop.attach(merkleDrop.address);
 
     const txn = await cumulativeMerkleDrop.setMerkleRoot(
-        '0x8c51757e9e9e063c40ea6be00b7eb030548d3e4b04e0804758260a45f9886e34',
+        '0xc1f080b7a112450a5f0315d551f24da621e3fef4562af52652ee7685c35d2c00',
     );
     await txn;
 

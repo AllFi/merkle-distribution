@@ -2,6 +2,7 @@ const { MerkleTree } = require('merkletreejs');
 const keccak256 = require('keccak256');
 const fs = require('fs');
 const { toBN } = require('../test/helpers/utils');
+const bs58 = require('bs58')
 
 function findSortedIndex(self, h) {
     return self.leaves.indexOf(h);
@@ -18,7 +19,8 @@ function makeDrop(wallets, amounts) {
 }
 
 const zip = (a, b) => a.map((k, i) => [k, b[i]]);
-const w1 = "0x90F8bf6A479f320ead074411a4B0e7944Ea8c9C1";
+const zkAddress = "p64j5vtKm2SUFJbv3FkTZUb1aCRp4xcXk66v14Je7GZSpe5ZNqiJBHUtXC85Mr";
+const w1 = `0x${Buffer.from(bs58.decode(zkAddress)).toString('hex')}`;
 const accounts = Array(10).fill().map((_, i) => w1);
 const amounts = Array(10).fill().map((_, i) => '1000000000000000000');
 const drop = makeDrop(accounts, amounts);

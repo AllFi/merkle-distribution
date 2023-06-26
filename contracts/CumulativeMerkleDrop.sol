@@ -1,25 +1,29 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity 0.8.15;
+pragma solidity ^0.8.0;
 pragma abicoder v1;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/interfaces/IERC1363.sol";
 import "@1inch/solidity-utils/contracts/libraries/SafeERC20.sol";
 // import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
 import "./interfaces/ICumulativeMerkleDrop.sol";
+import "./zkbob/IZkBobDirectDeposits.sol";
 
 contract CumulativeMerkleDrop is Ownable, ICumulativeMerkleDrop {
     using SafeERC20 for IERC20;
     // using MerkleProof for bytes32[];
 
     address public immutable override token;
+    address public immutable dd;
 
     bytes32 public override merkleRoot;
-    mapping(address => uint256) public cumulativeClaimed;
+    mapping(bytes => uint256) public cumulativeClaimed;
 
-    constructor(address token_) {
+    constructor(address token_, address dd_) {
         token = token_;
+        dd = dd_;
     }
 
     function setMerkleRoot(bytes32 merkleRoot_) external override onlyOwner {
@@ -28,7 +32,7 @@ contract CumulativeMerkleDrop is Ownable, ICumulativeMerkleDrop {
     }
 
     function claim(
-        address account,
+        bytes memory zkAddress,
         uint256 cumulativeAmount,
         bytes32 expectedMerkleRoot,
         bytes32[] calldata merkleProof
@@ -36,19 +40,24 @@ contract CumulativeMerkleDrop is Ownable, ICumulativeMerkleDrop {
         require(merkleRoot == expectedMerkleRoot, "CMD: Merkle root was updated");
 
         // Verify the merkle proof
-        bytes32 leaf = keccak256(abi.encodePacked(account, cumulativeAmount));
+        bytes32 leaf = keccak256(abi.encodePacked(zkAddress, cumulativeAmount));
         require(_verifyAsm(merkleProof, expectedMerkleRoot, leaf), "CMD: Invalid proof");
 
         // Mark it claimed
-        uint256 preclaimed = cumulativeClaimed[account];
+        uint256 preclaimed = cumulativeClaimed[zkAddress];
         require(preclaimed < cumulativeAmount, "CMD: Nothing to claim");
-        cumulativeClaimed[account] = cumulativeAmount;
+        cumulativeClaimed[zkAddress] = cumulativeAmount;
 
         // Send the token
         unchecked {
             uint256 amount = cumulativeAmount - preclaimed;
-            IERC20(token).safeTransfer(account, amount);
-            emit Claimed(account, amount);
+            //IERC20(token).safeTransfer(account, amount);
+            //IERC1363(token).transferAndCall(dd, amount, abi.encode(msg.sender, zkAddress));
+            IERC20(token).approve(dd, amount);
+            IZkBobDirectDeposits(dd).directDeposit(msg.sender, amount, zkAddress);
+            
+            //emit Claimed(account, amount);
+            emit Claimed(msg.sender, amount);
         }
     }
 

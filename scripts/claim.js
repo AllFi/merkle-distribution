@@ -1,16 +1,18 @@
 const hre = require('hardhat');
 const { getChainId, ethers } = hre;
+const bs58 = require('bs58')
 
 async function main() {
-    let address = "0xD86C8F0327494034F60e25074420BcCF560D5610";
+    let address = "0xFcCeD5E997E7fb1D0594518D3eD57245bB8ed17E";
     
-    let account = "0x90F8bf6A479f320ead074411a4B0e7944Ea8c9C1";
-    let root = "0x8c51757e9e9e063c40ea6be00b7eb030548d3e4b04e0804758260a45f9886e34";
+    let zkAddress = "p64j5vtKm2SUFJbv3FkTZUb1aCRp4xcXk66v14Je7GZSpe5ZNqiJBHUtXC85Mr";;
+    let account = `0x${Buffer.from(bs58.decode(zkAddress)).toString('hex')}`
+    let root = "0xc1f080b7a112450a5f0315d551f24da621e3fef4562af52652ee7685c35d2c00";
     let proof = [
-        "0xae8f1cb988dec5621d364f98f5a3af9345ee70a6932e9800854ea4a3969b6e7c",
-        "0x69278580d530cffe3c681b0cadd224a333e6b4f860417aee7b1b8a198448bc1b",
-        "0x1f3c430f4dc8df5507aa4fd0c658905403a43a25eb1726814be91433bc2b551a",
-        "0x69278580d530cffe3c681b0cadd224a333e6b4f860417aee7b1b8a198448bc1b"
+        "0xcdb59eb609d2de1a47d19afd978806186e36782287fb51e233c780f0e661b9b2",
+        "0x47eee686a0ca7a6d4afdfd769aa650aebc79813868156d5595f72563b4768fb8",
+        "0xd3c67eb07e2fafc81e26223c774a6cc12314599921545bcc295ac7de105b7807",
+        "0x47eee686a0ca7a6d4afdfd769aa650aebc79813868156d5595f72563b4768fb8"
       ];
     
     console.log(`Chain Id: ${await getChainId()}`);
