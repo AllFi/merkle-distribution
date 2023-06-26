@@ -7,26 +7,21 @@ module.exports = async ({ deployments, getNamedAccounts }) => {
 
     const { deploy } = deployments;
     const { deployer } = await getNamedAccounts();
+    console.log(`deployer: ${deployer}`);
 
-    const args = ['0x111111111117dC0aa78b770fA6A738034120C302'];
+    const args = ['0xCfEB869F69431e42cdB54A4F4f105C19C080A601'];
 
     const merkleDrop = await deploy('CumulativeMerkleDrop', {
         from: deployer,
         args,
         skipIfAlreadyDeployed: true,
-        maxFeePerGas: 100000000000,
-        maxPriorityFeePerGas: 2000000000,
     });
 
     const CumulativeMerkleDrop = await ethers.getContractFactory('CumulativeMerkleDrop');
     const cumulativeMerkleDrop = CumulativeMerkleDrop.attach(merkleDrop.address);
 
     const txn = await cumulativeMerkleDrop.setMerkleRoot(
-        '0x323e1a13446c2a6ed35c700e5f336cdd367b554f76fd7e8268eb3a302e963924',
-        {
-            maxFeePerGas: 100000000000,
-            maxPriorityFeePerGas: 2000000000,
-        },
+        '0x8c51757e9e9e063c40ea6be00b7eb030548d3e4b04e0804758260a45f9886e34',
     );
     await txn;
 
@@ -40,4 +35,4 @@ module.exports = async ({ deployments, getNamedAccounts }) => {
     }
 };
 
-module.exports.skip = async () => true;
+//module.exports.skip = async () => true;
