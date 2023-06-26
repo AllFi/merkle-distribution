@@ -40,10 +40,10 @@ async function main() {
     console.log(
         JSON.stringify({
             merkleRoot: drop.root,
-            tokenTotal: '0x' + amounts.map(toBN).reduce((a, b) => a.add(b), toBN('0')).toString(16),
-            claims: zip(accounts, amounts).map(([w, amount]) => ({
-                wallet: w,
-                amount: '0x' + toBN(amount).toString(16),
+            tokenTotal: amounts.map(toBN).reduce((a, b) => a.add(b), toBN('0')).toString(10),
+            claims: zip(accounts, amounts).map(([w, amount], i) => ({
+                wallet: zkAddresses[i],
+                amount: amount,
                 proof: drop.proofs[findSortedIndex(drop, MerkleTree.bufferToHex(keccak256(w + toBN(amount).toString(16, 64))))],
             })).reduce((a, { wallet, amount, proof }) => {
                 a[wallet] = { amount, proof };
