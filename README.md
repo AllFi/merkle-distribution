@@ -16,3 +16,13 @@ Each next Merkle Tree root replaces previous one and should contain cumulative b
 ## Signature-based drop
 
 Each entry of the drop contains private key which is used to sign the address of the receiver. This is done to safely distribute the drop and prevent MEV stealing.
+
+## ZkBob Example
+1. Add your zkAddresses in the `./scripts/prepare.js`
+2. Run `yarn hardhat --network local run ./scripts/prepare.js`
+3. Copy merkle root to the `./deploy/deploy-zkbob.js`
+4. Fill token address, direct deposit queue address in the `./deploy/deploy-zkbob.js`
+5. Run `yarn deploy local`
+6. Send some tokens to the contract address
+7. Copy the contract address, merkle root, zkAddress, and proof to the `./scripts/claim.js`
+8. Run `yarn hardhat --network local run ./scripts/claim.js`
