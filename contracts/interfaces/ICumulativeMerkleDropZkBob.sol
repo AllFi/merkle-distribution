@@ -8,7 +8,7 @@ interface ICumulativeMerkleDropZkBob {
     // This event is triggered whenever a call to #setMerkleRoot succeeds.
     event MerkelRootUpdated(bytes32 oldMerkleRoot, bytes32 newMerkleRoot);
     // This event is triggered whenever a call to #claim succeeds.
-    event Claimed(bytes indexed zkAddress, uint256 amount);
+    event Claimed(address indexed account, uint256 amount);
 
     // Returns the address of the token distributed by this contract.
     function token() external view returns (address);
@@ -18,7 +18,8 @@ interface ICumulativeMerkleDropZkBob {
     function setMerkleRoot(bytes32 merkleRoot_) external;
     // Claim the given amount of the token to the given address. Reverts if the inputs are invalid.
     function claim(
-        bytes memory account,
+        bytes memory zkAddress,
+        address account,
         uint256 cumulativeAmount,
         bytes32 expectedMerkleRoot,
         bytes32[] calldata merkleProof

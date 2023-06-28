@@ -19,20 +19,19 @@ function makeDrop(wallets, amounts) {
 
 async function main() {
     const zip = (a, b) => a.map((k, i) => [k, b[i]]);
-    const zkAddresses = [
-        "p64j5vtKm2SUFJbv3FkTZUb1aCRp4xcXk66v14Je7GZSpe5ZNqiJBHUtXC85Mr",
-        "G3Wo7ERfGjT9h2b4xTEcW2dfQfJmiYDUVVtXKQUT8PEbjRCT59saRfTu6S58myi",
-        "SHHvV4r1ojj7Aa3Zyo5sxadPxDZ62znjBXT8PdcPNtWGMzU5CvDPRW2RFwHUW3m",
-        "3u9gjStCGJF453d9VqAy2JR8kPc1ysDK39wghL1SWXJJ8suBTRcKjYoZ71KUiRE",
-        "GCuKF8oTem6e7bWMaURi6Fgkhy5fs2pMX5HSJD73xWvPwH15DRDBLdovRPfhayL",
-        "P46CMrVKEVm5GBQmozHWiwfGxQDmQEPvJJHTmti6rDrP6mSKqxiBWhjjUggBDqi",
-        "UPypV2D8Mb6vgqu33A1jPNZn9mwfQDWbq3PxndyCqUThtwAzkGfYE2aXRQL3Au3",
-        "TJExto9rJZ2A1TxJkMw2Zbb9t6fmwRZXufmEj1tDM2nQLRw1rpVkVS53XtH5NfT",
-        "KKNKVq7ys4ZYS43otiGt78ekG4Hhgzzo3PyaJskcMtRPX5jhhbNB7U41frDs3Q6",
-        "EVW7K6NzpBaGCvGiTsaNsXTpJDLGbkaudUEHnQVrdGTAQr24cVExJKPgWC3ViUt"
+    const accounts = [
+        "0x90F8bf6A479f320ead074411a4B0e7944Ea8c9C1",
+        "0xFFcf8FDEE72ac11b5c542428B35EEF5769C409f0",
+        "0x22d491Bde2303f2f43325b2108D26f1eAbA1e32b",
+        "0xE11BA2b4D45Eaed5996Cd0823791E0C93114882d",
+        "0xd03ea8624C8C5987235048901fB614fDcA89b117",
+        "0x95cED938F7991cd0dFcb48F0a06a40FA1aF46EBC",
+        "0x3E5e9111Ae8eB78Fe1CC3bb8915d5D461F3Ef9A9",
+        "0x28a8746e75304c0780E011BEd21C72cD78cd535E",
+        "0xACa94ef8bD5ffEE41947b4585a84BdA5a3d3DA6E",
+        "0x1dF62f291b2E969fB0849d99D9Ce41e2F137006e"
     ];
     
-    const accounts = zkAddresses.map((zkAddress) => `0x${Buffer.from(bs58.decode(zkAddress)).toString('hex')}`);
     const amounts = Array(10).fill().map((_) => '1000000000000000000');
     
     const drop = makeDrop(accounts, amounts);
@@ -42,7 +41,7 @@ async function main() {
             merkleRoot: drop.root,
             tokenTotal: amounts.map(toBN).reduce((a, b) => a.add(b), toBN('0')).toString(10),
             claims: zip(accounts, amounts).map(([w, amount], i) => ({
-                wallet: zkAddresses[i],
+                wallet: accounts[i],
                 amount: amount,
                 proof: drop.proofs[findSortedIndex(drop, MerkleTree.bufferToHex(keccak256(w + toBN(amount).toString(16, 64))))],
             })).reduce((a, { wallet, amount, proof }) => {

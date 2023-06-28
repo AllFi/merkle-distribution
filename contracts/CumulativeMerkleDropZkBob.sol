@@ -18,7 +18,7 @@ contract CumulativeMerkleDropZkBob is Ownable, ICumulativeMerkleDropZkBob {
     address public immutable dd;
 
     bytes32 public override merkleRoot;
-    mapping(bytes => uint256) public cumulativeClaimed;
+    mapping(address => uint256) public cumulativeClaimed;
 
     constructor(address token_, address dd_) {
         token = token_;
@@ -32,6 +32,7 @@ contract CumulativeMerkleDropZkBob is Ownable, ICumulativeMerkleDropZkBob {
 
     function claim(
         bytes memory zkAddress,
+        address account,
         uint256 cumulativeAmount,
         bytes32 expectedMerkleRoot,
         bytes32[] calldata merkleProof
@@ -39,20 +40,20 @@ contract CumulativeMerkleDropZkBob is Ownable, ICumulativeMerkleDropZkBob {
         require(merkleRoot == expectedMerkleRoot, "CMD: Merkle root was updated");
 
         // Verify the merkle proof
-        bytes32 leaf = keccak256(abi.encodePacked(zkAddress, cumulativeAmount));
+        bytes32 leaf = keccak256(abi.encodePacked(account, cumulativeAmount));
         require(_verifyAsm(merkleProof, expectedMerkleRoot, leaf), "CMD: Invalid proof");
 
         // Mark it claimed
-        uint256 preclaimed = cumulativeClaimed[zkAddress];
+        uint256 preclaimed = cumulativeClaimed[account];
         require(preclaimed < cumulativeAmount, "CMD: Nothing to claim");
-        cumulativeClaimed[zkAddress] = cumulativeAmount;
+        cumulativeClaimed[account] = cumulativeAmount;
 
         // Send the token
         unchecked {
             uint256 amount = cumulativeAmount - preclaimed;
             IERC20(token).approve(dd, amount);
             IZkBobDirectDeposits(dd).directDeposit(msg.sender, amount, zkAddress);
-            emit Claimed(zkAddress, amount);
+            emit Claimed(account, amount);
         }
     }
 

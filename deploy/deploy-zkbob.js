@@ -12,7 +12,7 @@ module.exports = async ({ deployments, getNamedAccounts }) => {
 
     const tokenAddress = '0xCfEB869F69431e42cdB54A4F4f105C19C080A601';
     const directDepositAddress = '0x9b1f7F645351AF3631a656421eD2e40f2802E6c0'
-    const merkleRoot = '0x6dfc5f949d11531804a4943ff73c7719128eee6612d89654dc5a49121b56c07d'
+    const merkleRoot = '0x9a2052debb5177d96dbb4f8e1d8a69ad2c92739bc6723dcb9a849f192bbf0037'
     
     const args = [tokenAddress, directDepositAddress];
     const merkleDrop = await deploy('CumulativeMerkleDropZkBob', {
